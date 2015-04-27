@@ -2,9 +2,8 @@ import re
 import subprocess
 import urllib.request
 import datetime
-from scipy.constants.constants import year
 
-def search_url(data_dict):
+def search(data_dict):
     engine = 'http://www.assembly.ab.ca/documents/isysmenu.html'
     
     data_items = []
@@ -14,9 +13,9 @@ def search_url(data_dict):
     data = '&'.join(data_items).encode('ascii')
     r = urllib.request.urlopen(engine, data)
     
-    return r.geturl()
+    return r
 
-def get_hansard_url(date):
+def get_hansard_obj(date):
     fdate = date.strftime('%Y%m%d')
     ftime = date.strftime('%H%M')
     
@@ -27,9 +26,9 @@ def get_hansard_url(date):
                  'IW_FILTER_FNAME_LIKE': fname,
                  'IW_FIELD_OK': 'Search+in+Hansard'}
     
-    return search_url(data_dict)
+    return search(data_dict)
     
-def process_hansard(file_name):
+def process_hansard(html_obj):
     return None
     
 if __name__ == '__main__':
@@ -46,4 +45,4 @@ if __name__ == '__main__':
         time = datetime.time(19, 30)
     
     date = datetime.datetime.combine(datetime.date(year, month, day), time)
-    print(get_hansard_url(date))
+    print(get_hansard_obj(date).read())
