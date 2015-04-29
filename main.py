@@ -67,6 +67,9 @@ def process_hansard(html_obj):
     with open('output.txt', 'w') as file:
         file.write(content)
 
+    start = re.search(r'\[The Speaker in the chair\]', content)
+    end = re.search('Table of Contents', content)
+
     print(content)
 
     return None
