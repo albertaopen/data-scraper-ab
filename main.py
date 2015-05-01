@@ -3,6 +3,8 @@
 # Copyright (c) 2015 Zhan Tong Zhang
 # Data scraper for Alberta Hansard
 #
+# Information scraped MAY BE covered by copyright.
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
@@ -25,6 +27,7 @@ import re
 import subprocess
 import urllib.request
 import datetime
+import pymongo as dba
 
 
 def search(data_dict):
@@ -57,8 +60,11 @@ def get_hansard_obj(date):
     return search(data_dict)
 
 
-def process_hansard(html_obj):
+def process_hansard(hansard, database, prefix='hs'):
+    html_obj = hansard[0]
+    date = hansard[1]
     html = str(html_obj).replace(r'\r\n', '\n')
+    db = datebase
 
     # remove useless information (styles and mail-in info)
     content = re.split('html>[\s\S]*(?=Province of Alberta<br \/>)', html)
@@ -72,9 +78,31 @@ def process_hansard(html_obj):
 
     print(content)
 
+    person = {'id': person_id,
+              'role'}
+    event = {'id': event_id,
+             'time': date}
+
+    db[prefix + '_event'].insert_one(event)
+
+    entry = {'author': speaker_id,
+             'content': speech,
+             'id': speech_id,
+             'eventid': event_id,
+             'time': time}
+
+    db[prefix + '_speech'].insert_one(entry)
+
     return None
 
+
+def init_db(database):
+    database.
+
 if __name__ == '__main__':
+    dbclient = dba.MongoClient()
+    db = dbclient['oaab']
+
     year = int(input('year: '))
     month = int(input('month: '))
     day = int(input('day: '))
@@ -90,4 +118,4 @@ if __name__ == '__main__':
     date = datetime.datetime.combine(datetime.date(year, month, day), time)
     obj = get_hansard_obj(date)
     print(obj[1])
-    process_hansard(obj[0])
+    process_hansard([obj[0], date], db)
