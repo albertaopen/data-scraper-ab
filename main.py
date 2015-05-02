@@ -79,7 +79,14 @@ def process_hansard(hansard, database, prefix='hs'):
     print(content)
 
     person = {'id': person_id,
-              'role'}
+              'name': name,
+              'riding': riding,
+              'party': party,
+              'title': title,
+              'roles': ['MLA', other_roles]}
+
+    db[prefix + '_person'].insert_one(event)
+
     event = {'id': event_id,
              'time': date}
 
